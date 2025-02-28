@@ -131,7 +131,7 @@ const formatDateForInput = (dateString) => {
 
 const deleteTask = async (id) => {
   await fetch(`http://localhost:8900/tasks/${id}`, { method: 'DELETE' });
-  popupMessage.value = "ลบสำเร็จ";
+  popupMessage.value = "Delete successfully";
   showPopup.value = true;
   fetchTasks();
 };

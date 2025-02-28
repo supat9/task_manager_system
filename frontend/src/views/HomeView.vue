@@ -1,36 +1,37 @@
 <template>  
   <q-page padding>
-    <q-card class="q-pa-md">
-      <q-card-section>
-        <h1 class="text-h5">Task Manager</h1>
+    <q-card class="q-pa-md shadow-2">
+      <q-card-section class="bg-primary text-white">
+        <h1 class="text-h5">📋 Task Manager</h1>
       </q-card-section>
       <q-card-section>
         <q-form @submit.prevent="handleSubmit">
-          <q-input v-model="task.id" label="ID" outlined disable />
-          <q-input v-model="task.title" label="Title" outlined required @blur="validateInput" />
-          <q-input v-model="task.description" label="Description" outlined @blur="validateInput" />
-          <q-select v-model="task.status" :options="statusOptions" label="Status" outlined />
-          <q-input v-model="task.due_date" type="datetime-local" label="Due Date" outlined  />
-          <div class="q-mt-md">
-            <q-btn type="submit" color="primary">{{ isEditing ? 'Update' : 'Add' }} Task</q-btn>
-            <q-btn v-if="isEditing" color="grey" class="q-ml-sm" @click="resetForm">ย้อนกลับ</q-btn>
+          <q-input v-model="task.id" label="🆔 ID" outlined disable class="q-mb-md" />
+          <q-input v-model="task.title" label="📌 Title" outlined required @blur="validateInput" class="q-mb-md" />
+          <q-input v-model="task.description" label="📝 Description" outlined @blur="validateInput" class="q-mb-md" />
+          <q-select v-model="task.status" :options="statusOptions" label="📊 Status" outlined class="q-mb-md" />
+          <q-input v-model="task.due_date" type="datetime-local" label="⏳ Due Date" outlined class="q-mb-md" />
+          <div class="q-mt-md flex justify-between">
+            <q-btn type="submit" color="primary" icon="save">{{ isEditing ? 'Update' : 'Add' }} Task</q-btn>
+            <q-btn v-if="isEditing" color="grey" class="q-ml-sm" icon="arrow_back" @click="resetForm">Back</q-btn>
           </div>
         </q-form>
       </q-card-section>
     </q-card>
 
     <q-table 
-      class="q-mt-md"
+      class="q-mt-md shadow-2"
       :rows="tasks" 
       :columns="columns" 
       row-key="id" 
       bordered 
       separator="cell"
+      dense
     >
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
-          <q-btn color="warning" label="Edit" @click="editTask(props.row)" dense />
-          <q-btn color="negative" label="Delete" @click="deleteTask(props.row.id)" dense class="q-ml-sm" />
+          <q-btn color="warning" label="Edit" icon="edit" @click="editTask(props.row)" dense />
+          <q-btn color="negative" label="Delete" icon="delete" @click="deleteTask(props.row.id)" dense class="q-ml-sm" />
         </q-td>
       </template>
     </q-table>
@@ -38,7 +39,7 @@
     <q-dialog v-model="showPopup">
       <q-card>
         <q-card-section>
-          <div class="text-h6 text-black">{{ popupMessage }}</div>
+          <div class="text-h6 text-black text-center">{{ popupMessage }}</div>
         </q-card-section>
         <q-card-actions align="right">
           <q-btn flat label="OK" color="primary" v-close-popup />
@@ -72,7 +73,7 @@ const columns = [
 const validateInput = () => {
   const thaiRegex = /[\u0E00-\u0E7F]/;
   if (thaiRegex.test(task.value.title) || thaiRegex.test(task.value.description)) {
-    popupMessage.value = "ไม่สามารถใช้ภาษาไทยได้";
+    popupMessage.value = "❌ ไม่สามารถใช้ภาษาไทยได้";
     showPopup.value = true;
   }
 };
@@ -84,7 +85,7 @@ const fetchTasks = async () => {
 
 const handleSubmit = async () => {
   if (!task.value.title || !task.value.description || !task.value.status || !task.value.due_date) {
-    popupMessage.value = "Please fill in all fields.";
+    popupMessage.value = "⚠️ Please fill in all fields.";
     showPopup.value = true;
     return;
   }
@@ -102,12 +103,9 @@ const handleSubmit = async () => {
     body: JSON.stringify(updatedTask)
   };
   const url = isEditing.value ? `http://localhost:8900/tasks/${editId}` : 'http://localhost:8900/tasks';
-  const response = await fetch(url, options);
-  const data = await response.json();
-
-  popupMessage.value = isEditing.value ? "Edited successfully" : "Added successfully";
+  await fetch(url, options);
+  popupMessage.value = isEditing.value ? "✅ Edited successfully" : "✅ Added successfully";
   showPopup.value = true;
-
   resetForm();
   fetchTasks();
 };
@@ -131,7 +129,7 @@ const formatDateForInput = (dateString) => {
 
 const deleteTask = async (id) => {
   await fetch(`http://localhost:8900/tasks/${id}`, { method: 'DELETE' });
-  popupMessage.value = "Delete successfully";
+  popupMessage.value = "🗑️ Delete successfully";
   showPopup.value = true;
   fetchTasks();
 };

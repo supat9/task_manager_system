@@ -7,8 +7,8 @@
       <q-card-section>
         <q-form @submit.prevent="handleSubmit">
           <q-input v-model="task.id" label="ID" outlined disable />
-          <q-input v-model="task.title" label="Title" outlined required />
-          <q-input v-model="task.description" label="Description" outlined />
+          <q-input v-model="task.title" label="Title" outlined required @blur="validateInput" />
+          <q-input v-model="task.description" label="Description" outlined @blur="validateInput" />
           <q-select v-model="task.status" :options="statusOptions" label="Status" outlined />
           <q-input v-model="task.due_date" type="datetime-local" label="Due Date" outlined  />
           <div class="q-mt-md">
@@ -68,6 +68,14 @@ const columns = [
   { name: 'due_date', label: 'Due Date', field: 'due_date', align: 'left' },
   { name: 'actions', label: 'Actions', field: 'actions', align: 'center', sortable: false }
 ];
+
+const validateInput = () => {
+  const thaiRegex = /[\u0E00-\u0E7F]/;
+  if (thaiRegex.test(task.value.title) || thaiRegex.test(task.value.description)) {
+    popupMessage.value = "ไม่สามารถใช้ภาษาไทยได้";
+    showPopup.value = true;
+  }
+};
 
 const fetchTasks = async () => {
   const response = await fetch('http://localhost:8900/tasks');

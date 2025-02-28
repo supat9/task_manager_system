@@ -84,7 +84,7 @@ const fetchTasks = async () => {
 
 const handleSubmit = async () => {
   if (!task.value.title || !task.value.description || !task.value.status || !task.value.due_date) {
-    popupMessage.value = "กรุณากรอกให้ครบทุกช่อง";
+    popupMessage.value = "Please fill in all fields.";
     showPopup.value = true;
     return;
   }
@@ -105,7 +105,7 @@ const handleSubmit = async () => {
   const response = await fetch(url, options);
   const data = await response.json();
 
-  popupMessage.value = isEditing.value ? "แก้ไขสำเร็จ" : "เพิ่มสำเร็จ";
+  popupMessage.value = isEditing.value ? "Edited successfully" : "Added successfully";
   showPopup.value = true;
 
   resetForm();
